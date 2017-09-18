@@ -41,7 +41,7 @@
         android:layout_marginRight="50dp"
         android:ems="10"
         android:hint="password"
-        android:inputType="textPersonName"
+        android:inputType="textPassword"
         tools:layout_editor_absoluteX="191dp"
         tools:layout_editor_absoluteY="558dp"
         android:layout_marginTop="9dp"
@@ -78,5 +78,6 @@
         android:layout_marginTop="41dp"
         android:layout_alignTop="@+id/LoginSignup"
         android:layout_centerHorizontal="true" />
+
 
 </RelativeLayout>

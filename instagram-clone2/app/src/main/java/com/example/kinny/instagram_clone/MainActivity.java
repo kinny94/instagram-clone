@@ -99,7 +99,7 @@ import com.google.firebase.database.FirebaseDatabase;
                                 // If sign in fails, display a message to the user.
                                 Log.i("Sign Up", "createUserWithEmail:failure", task.getException());
                                 task.getException();
-                                Toast.makeText(getApplicationContext(), "Authentication failed.",
+                                Toast.makeText(getApplicationContext(), task.getException().getLocalizedMessage(),
                                         Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -116,7 +116,7 @@ import com.google.firebase.database.FirebaseDatabase;
                                 // signed in user can be handled in the listener.
                                 if (!task.isSuccessful()) {
                                     Log.w("Login", "signInWithEmail:failed", task.getException());
-                                    Toast.makeText(getApplicationContext(), "Login Failed!",
+                                    Toast.makeText(getApplicationContext(), task.getException().getLocalizedMessage(),
                                             Toast.LENGTH_SHORT).show();
                                 }else{
                                     makeToast("Successfull Logged in");
