@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1022388496003",
+    "firebase_url": "https://my-contacts-ee12c.firebaseio.com",
+    "project_id": "my-contacts-ee12c",
+    "storage_bucket": "my-contacts-ee12c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1022388496003:android:1c88f5ba070c049f",
+        "android_client_info": {
+          "package_name": "com.example.kinny.instagram_clone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1022388496003-ravjbu427f8922fvdc8k8rqj6ueoq0fe.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.kinny.instagram_clone",
+            "certificate_hash": "cc3faa260a8bd341059f83ebff9d422d041d0380"
+          }
+        },
+        {
+          "client_id": "1022388496003-42ndbhl1g7cgbpt8clh4885kgb7v95er.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgOagvXhnHr4cBV0KE9iKp5IDIYV1_NcA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1022388496003-42ndbhl1g7cgbpt8clh4885kgb7v95er.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
