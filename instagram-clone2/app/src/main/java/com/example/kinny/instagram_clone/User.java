@@ -1,19 +1,20 @@
 package com.example.kinny.instagram_clone;
 
+import java.util.HashMap;
+import java.util.HashSet;
+
 /**
  * Created by kinny on 9/18/2017.
  */
 
 public class User {
-    public String username;
-    public String password;
     public String email;
+    public String password;
 
     public User(){}
 
-    public User(String username, String password, String email){
-        this.username = username;
+    public User(String username, String password){
+        this.email = username;
         this.password = password;
-        this.email = email;
     }
 }
