@@ -5,9 +5,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,7 +23,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-  class MainActivity extends AppCompatActivity implements View.OnClickListener{
+  class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener{
 
     EditText password;
     EditText email;
@@ -29,6 +33,8 @@ import com.google.firebase.database.FirebaseDatabase;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     Boolean signupModeActive;
+      ImageView logo;
+      RelativeLayout relativeLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,9 +64,17 @@ import com.google.firebase.database.FirebaseDatabase;
         email = (EditText) findViewById(R.id.email);
         password = (EditText) findViewById(R.id.password);
         signupButton = (Button) findViewById(R.id.LoginSignup);
-
+        logo = (ImageView) findViewById(R.id.mainPageLogo);
+        relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
         changeSingupLoginMode = (TextView) findViewById(R.id.changeButtonText);
+
         changeSingupLoginMode.setOnClickListener(this);
+        logo.setOnKeyListener(this);
+        relativeLayout.setOnClickListener(this);
+
+        email.setOnKeyListener(this);
+        password.setOnKeyListener(this);
+
 
     }
 
@@ -70,6 +84,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 
     public void signupOrLogin(View view){
+
         if(TextUtils.isEmpty(String.valueOf(email.getText()))){
             this.makeToast("Please enter an email id!");
             return;
@@ -158,6 +173,21 @@ import com.google.firebase.database.FirebaseDatabase;
                 changeSingupLoginMode.setText("Log In");
                 signupButton.setText("Sign Up");
             }
+        }else if(v.getId() == R.id.mainPageLogo || v.getId() == R.id.relativeLayout){
+
+            // removing keyboard formt the app if clicked somewhere else
+
+            InputMethodManager inm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            inm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
         }
     }
-}
+
+      @Override
+      public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+          if(keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN){
+              signupOrLogin(v);
+          }
+          return false;
+      }
+  }
