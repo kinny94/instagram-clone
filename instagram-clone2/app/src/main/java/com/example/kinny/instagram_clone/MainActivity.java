@@ -1,5 +1,6 @@
 package com.example.kinny.instagram_clone;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,26 +24,34 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-  class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener{
+class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener {
 
     EditText password;
     EditText email;
     TextView changeSingupLoginMode;
-      Button signupButton;
+    Button signupButton;
     DatabaseReference users;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     Boolean signupModeActive;
-      ImageView logo;
-      RelativeLayout relativeLayout;
+    ImageView logo;
+    RelativeLayout relativeLayout;
+    FirebaseUser user;
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference myRef = database.getReference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Write a message to the database
+
+
         signupModeActive = true;
         // Firebase Database reference
         users = FirebaseDatabase.getInstance().getReference();
+
 
         // Firebase Authentication
         mAuth = FirebaseAuth.getInstance();
@@ -50,13 +59,14 @@ import com.google.firebase.database.FirebaseDatabase;
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
+                user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
-                    Log.d("Signed in", "onAuthStateChanged:signed_in:" + user.getUid());
+                    makeToast("Welcome back");
+                    showUserList();
                 } else {
                     // User is signed out
-                    Log.d("Signed Out", "onAuthStateChanged:signed_out");
+                    makeToast("Welcome");
                 }
             }
         };
@@ -78,48 +88,57 @@ import com.google.firebase.database.FirebaseDatabase;
 
     }
 
+    public void showUserList() {
+        Intent i = new Intent(getApplicationContext(), UserList.class);
+        startActivity(i);
+    }
+
     private static boolean isValidEmail(String email) {
         return !TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
 
-    public void signupOrLogin(View view){
+    public void signupOrLogin(View view) {
 
-        if(TextUtils.isEmpty(String.valueOf(email.getText()))){
+        if (TextUtils.isEmpty(String.valueOf(email.getText()))) {
             this.makeToast("Please enter an email id!");
             return;
         }
 
-        if(TextUtils.isEmpty(String.valueOf(password.getText()))){
+        if (TextUtils.isEmpty(String.valueOf(password.getText()))) {
             this.makeToast("Please enter a password");
             return;
         }
 
-        if(!isValidEmail(String.valueOf(email.getText()))){
+        if (!isValidEmail(String.valueOf(email.getText()))) {
             this.makeToast("Invalid email address!!");
             return;
-        }else{
+        } else {
 
-            if(signupModeActive){
+            if (signupModeActive) {
                 mAuth.createUserWithEmailAndPassword(String.valueOf(email.getText()), String.valueOf(email.getText()))
-                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                // Sign in success, update UI with the signed-in user's information
-                                Log.i("Sign Up", "createUserWithEmail:success");
-                                FirebaseUser user = mAuth.getCurrentUser();
-                                makeToast("Successfully Signed Up");
-                            } else {
-                                // If sign in fails, display a message to the user.
-                                Log.i("Sign Up", "createUserWithEmail:failure", task.getException());
-                                task.getException();
-                                Toast.makeText(getApplicationContext(), task.getException().getLocalizedMessage(),
-                                        Toast.LENGTH_SHORT).show();
+                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    // Sign in success, update UI with the signed-in user's information
+                                    Log.i("Sign Up", "createUserWithEmail:success");
+
+                                    User newUser = new User(String.valueOf(email.getText()), String.valueOf(password.getText()));
+                                    myRef.child("users").push().setValue(newUser);
+                                    makeToast("Successfully Signed Up");
+                                    showUserList();
+
+                                } else {
+                                    // If sign in fails, display a message to the user.
+                                    Log.i("Sign Up", "createUserWithEmail:failure", task.getException());
+                                    task.getException();
+                                    Toast.makeText(getApplicationContext(), task.getException().getLocalizedMessage(),
+                                            Toast.LENGTH_SHORT).show();
+                                }
                             }
-                        }
-                    });
-            }else{
+                        });
+            } else {
                 mAuth.signInWithEmailAndPassword(String.valueOf(email.getText()), String.valueOf(password.getText()))
                         .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                             @Override
@@ -133,8 +152,9 @@ import com.google.firebase.database.FirebaseDatabase;
                                     Log.w("Login", "signInWithEmail:failed", task.getException());
                                     Toast.makeText(getApplicationContext(), task.getException().getLocalizedMessage(),
                                             Toast.LENGTH_SHORT).show();
-                                }else{
+                                } else {
                                     makeToast("Successfull Logged in");
+                                    showUserList();
                                 }
                             }
                         });
@@ -157,23 +177,23 @@ import com.google.firebase.database.FirebaseDatabase;
         }
     }
 
-    public  void makeToast(String text){
+    public void makeToast(String text) {
         Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id.changeButtonText){
-            if(signupModeActive == true){
+        if (v.getId() == R.id.changeButtonText) {
+            if (signupModeActive == true) {
                 signupModeActive = false;
                 changeSingupLoginMode.setText("Sign Up");
                 signupButton.setText("Log In");
-            }else{
+            } else {
                 signupModeActive = true;
                 changeSingupLoginMode.setText("Log In");
                 signupButton.setText("Sign Up");
             }
-        }else if(v.getId() == R.id.mainPageLogo || v.getId() == R.id.relativeLayout){
+        } else if (v.getId() == R.id.mainPageLogo || v.getId() == R.id.relativeLayout) {
 
             // removing keyboard formt the app if clicked somewhere else
 
@@ -182,12 +202,12 @@ import com.google.firebase.database.FirebaseDatabase;
         }
     }
 
-      @Override
-      public boolean onKey(View v, int keyCode, KeyEvent event) {
+    @Override
+    public boolean onKey(View v, int keyCode, KeyEvent event) {
 
-          if(keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN){
-              signupOrLogin(v);
-          }
-          return false;
-      }
-  }
+        if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
+            signupOrLogin(v);
+        }
+        return false;
+    }
+}
