@@ -29,6 +29,7 @@ import com.google.firebase.database.ValueEventListener;
 
 class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener {
 
+    // Layout elements
     EditText password;
     EditText email;
     TextView changeSingupLoginMode;
@@ -37,16 +38,16 @@ class MainActivity extends AppCompatActivity implements View.OnClickListener, Vi
     RelativeLayout relativeLayout;
     EditText username;
 
+    // Fierbase credentials
+    public static FirebaseUser user;
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference myRef = database.getReference("users");
     DatabaseReference users;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
+    // Util variables
     Boolean signupModeActive;
-
-
-    FirebaseUser user;
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference myRef = database.getReference("users");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +71,9 @@ class MainActivity extends AppCompatActivity implements View.OnClickListener, Vi
                 user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
-                    makeToast("Welcome back");
+
+
+                    makeToast("Welcome back " + user.getEmail());
                     showUserList();
                 } else {
                     // User is signed out
