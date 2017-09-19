@@ -20,18 +20,18 @@
     <EditText
         android:id="@+id/email"
         android:layout_width="fill_parent"
-        android:paddingTop="20dp"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
         android:ems="10"
-        android:hint="Username"
+        android:hint="test@gmail.com"
         android:includeFontPadding="false"
         android:inputType="textPersonName"
+        android:paddingTop="20dp"
         tools:layout_editor_absoluteX="191dp"
-        tools:layout_editor_absoluteY="473dp"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        tools:layout_editor_absoluteY="473dp" />
 
     <EditText
         android:id="@+id/password"
@@ -45,9 +45,24 @@
         android:inputType="textPassword"
         tools:layout_editor_absoluteX="191dp"
         tools:layout_editor_absoluteY="558dp"
-        android:layout_marginTop="9dp"
+        android:layout_marginTop="22dp"
         android:layout_below="@+id/email"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:id="@+id/username"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/password"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginTop="14dp"
+        android:ems="10"
+        android:hint="username"
+        android:inputType="textPersonName"
+        android:paddingTop="20dp"
+        tools:layout_editor_absoluteX="191dp"
+        tools:layout_editor_absoluteY="558dp" />
 
     <Button
         android:id="@+id/LoginSignup"
@@ -62,9 +77,8 @@
         android:textSize="25dp"
         app:layout_constraintRight_toRightOf="parent"
         tools:layout_editor_absoluteY="642dp"
-        android:layout_marginTop="41dp"
-        android:layout_below="@+id/password"
-        android:layout_centerHorizontal="true" />
+        android:layout_above="@+id/changeButtonText"
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:id="@+id/changeButtonText"
@@ -76,9 +90,9 @@
         android:textSize="30dp"
         tools:layout_editor_absoluteX="259dp"
         tools:layout_editor_absoluteY="712dp"
-        android:layout_marginTop="41dp"
-        android:layout_alignTop="@+id/LoginSignup"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="12dp" />
 
 
 </RelativeLayout>

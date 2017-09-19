@@ -21,8 +21,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener {
 
@@ -30,15 +33,20 @@ class MainActivity extends AppCompatActivity implements View.OnClickListener, Vi
     EditText email;
     TextView changeSingupLoginMode;
     Button signupButton;
+    ImageView logo;
+    RelativeLayout relativeLayout;
+    EditText username;
+
     DatabaseReference users;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+
     Boolean signupModeActive;
-    ImageView logo;
-    RelativeLayout relativeLayout;
+
+
     FirebaseUser user;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference myRef = database.getReference();
+    DatabaseReference myRef = database.getReference("users");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +85,7 @@ class MainActivity extends AppCompatActivity implements View.OnClickListener, Vi
         logo = (ImageView) findViewById(R.id.mainPageLogo);
         relativeLayout = (RelativeLayout) findViewById(R.id.relativeLayout);
         changeSingupLoginMode = (TextView) findViewById(R.id.changeButtonText);
+        username = (EditText) findViewById(R.id.username);
 
         changeSingupLoginMode.setOnClickListener(this);
         logo.setOnKeyListener(this);
@@ -84,6 +93,7 @@ class MainActivity extends AppCompatActivity implements View.OnClickListener, Vi
 
         email.setOnKeyListener(this);
         password.setOnKeyListener(this);
+        username.setOnClickListener(this);
 
 
     }
@@ -97,6 +107,30 @@ class MainActivity extends AppCompatActivity implements View.OnClickListener, Vi
         return !TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
+    public void createAccount(final String accountEmail, final String accountPassword, final String accountUsername){
+        mAuth.createUserWithEmailAndPassword(accountEmail, accountPassword)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.i("Sign Up", "createUserWithEmail:success");
+
+                            User newUser = new User(accountEmail, accountPassword, accountUsername);
+                            myRef.push().setValue(newUser);
+                            makeToast("Successfully Signed Up");
+                            showUserList();
+
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.i("Sign Up", "createUserWithEmail:failure", task.getException());
+                            task.getException();
+                            Toast.makeText(getApplicationContext(), task.getException().getLocalizedMessage(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
 
     public void signupOrLogin(View view) {
 
@@ -116,28 +150,43 @@ class MainActivity extends AppCompatActivity implements View.OnClickListener, Vi
         } else {
 
             if (signupModeActive) {
-                mAuth.createUserWithEmailAndPassword(String.valueOf(email.getText()), String.valueOf(email.getText()))
-                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    // Sign in success, update UI with the signed-in user's information
-                                    Log.i("Sign Up", "createUserWithEmail:success");
 
-                                    User newUser = new User(String.valueOf(email.getText()), String.valueOf(password.getText()));
-                                    myRef.child("users").push().setValue(newUser);
-                                    makeToast("Successfully Signed Up");
-                                    showUserList();
+                if (TextUtils.isEmpty(String.valueOf(username.getText()))) {
+                    this.makeToast("Please enter a username");
+                    return;
+                }
 
-                                } else {
-                                    // If sign in fails, display a message to the user.
-                                    Log.i("Sign Up", "createUserWithEmail:failure", task.getException());
-                                    task.getException();
-                                    Toast.makeText(getApplicationContext(), task.getException().getLocalizedMessage(),
-                                            Toast.LENGTH_SHORT).show();
-                                }
+                myRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        boolean usernamTaken = false;
+
+                        for(DataSnapshot data: dataSnapshot.getChildren()){
+
+                            //Log.i("username", String.valueOf(data.child("username").getValue()));
+                            if ((data.child("username").getValue()).equals(String.valueOf(username.getText()))) {
+                                Log.i("name", String.valueOf(username.getText()));
+                                Log.i("name", String.valueOf(dataSnapshot));
+                                usernamTaken = true;
+                                break;
                             }
-                        });
+                        }
+
+                        if(usernamTaken){
+                            makeToast("Username Taken, Try Something else");
+                        }else{
+                            createAccount(String.valueOf(email.getText()), String.valueOf(password.getText()), String.valueOf(username.getText()));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        // Failed to read value
+                        Log.w("data", "Failed to read value.", error.toException());
+                    }
+                });
+
             } else {
                 mAuth.signInWithEmailAndPassword(String.valueOf(email.getText()), String.valueOf(password.getText()))
                         .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -188,14 +237,16 @@ class MainActivity extends AppCompatActivity implements View.OnClickListener, Vi
                 signupModeActive = false;
                 changeSingupLoginMode.setText("Sign Up");
                 signupButton.setText("Log In");
+                username.setVisibility(View.INVISIBLE);
             } else {
                 signupModeActive = true;
                 changeSingupLoginMode.setText("Log In");
                 signupButton.setText("Sign Up");
+                username.setVisibility(View.VISIBLE);
             }
         } else if (v.getId() == R.id.mainPageLogo || v.getId() == R.id.relativeLayout) {
 
-            // removing keyboard formt the app if clicked somewhere else
+            // removing keyboard form the app if clicked somewhere else
 
             InputMethodManager inm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             inm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
