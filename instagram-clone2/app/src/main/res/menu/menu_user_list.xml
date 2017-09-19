@@ -3,6 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context="com.example.kinny.instagram_clone.UserList">
 
-    <item android:id="@+id/share" android:title="Share" app:showAsAction="always" />
+    <item android:id="@+id/Logout" android:title="Logout" app:showAsAction="always" />
 
 </menu>

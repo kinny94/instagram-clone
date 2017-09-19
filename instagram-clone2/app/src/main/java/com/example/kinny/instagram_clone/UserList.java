@@ -9,6 +9,8 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -46,6 +48,13 @@ public class UserList extends AppCompatActivity {
     String user = MainActivity.user.getEmail();
     ProgressBar progressBar;
     Button shareImage;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_user_list, menu);
+        return true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +112,20 @@ public class UserList extends AppCompatActivity {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        if(id == R.id.Logout){
+            FirebaseAuth.getInstance().signOut();
+
+            Intent i = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(i);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -134,7 +157,6 @@ public class UserList extends AppCompatActivity {
                         progressBar.setVisibility(View.GONE);
                         shareImage.setEnabled(true);
 
-                        Uri url = taskSnapshot.getDownloadUrl();
                         Toast.makeText(getApplicationContext(), "Photo Uploaded!", Toast.LENGTH_LONG).show();
                     }
                 });
