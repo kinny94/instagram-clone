@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -65,6 +66,15 @@ public class UserList extends AppCompatActivity {
         mStorageRef = FirebaseStorage.getInstance().getReference();
 
         listview = (ListView) findViewById(R.id.userlist);
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent i = new Intent(getApplicationContext(), UserFeed.class);
+                i.putExtra("username", usersList.get(position));
+                startActivity(i);
+            }
+        });
+
         shareImage = (Button) findViewById(R.id.share);
 
         progressBar = (ProgressBar) findViewById(R.id.progressbar);
@@ -81,7 +91,6 @@ public class UserList extends AppCompatActivity {
 
                     for(DataSnapshot data: dataSnapshot.getChildren()){
                         if(!user.equals(String.valueOf((data.child("email")).getValue()))){
-                            Log.i("User", String.valueOf((data.child("username")).getValue()));
                             usersList.add(String.valueOf((data.child("username")).getValue()));
                         }
                     }

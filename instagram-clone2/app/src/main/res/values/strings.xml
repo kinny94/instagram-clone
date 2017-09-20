@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Instagram Clone</string>
+    <string name="title_activity_user_feed">UserFeed</string>
 </resources>

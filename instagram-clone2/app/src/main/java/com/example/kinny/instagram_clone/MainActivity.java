@@ -40,8 +40,8 @@ class MainActivity extends AppCompatActivity implements View.OnClickListener, Vi
 
     // Fierbase credentials
     public static FirebaseUser user;
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference myRef = database.getReference("users");
+    public static FirebaseDatabase database = FirebaseDatabase.getInstance();
+    public static DatabaseReference myRef = database.getReference("users");
     DatabaseReference users;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
