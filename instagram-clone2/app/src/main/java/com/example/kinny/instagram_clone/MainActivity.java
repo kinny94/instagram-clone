@@ -205,7 +205,6 @@ class MainActivity extends AppCompatActivity implements View.OnClickListener, Vi
                                     Toast.makeText(getApplicationContext(), task.getException().getLocalizedMessage(),
                                             Toast.LENGTH_SHORT).show();
                                 } else {
-                                    makeToast("Successfull Logged in");
                                     showUserList();
                                 }
                             }

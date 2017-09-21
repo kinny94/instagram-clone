@@ -7,6 +7,9 @@
     tools:context="com.example.kinny.instagram_clone.UserFeed">
 
 
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="fill_parent"
@@ -14,10 +17,6 @@
         android:orientation="vertical"
         android:weightSum="1">
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.32" />
     </LinearLayout>
+    </ScrollView>
 </android.support.design.widget.CoordinatorLayout>

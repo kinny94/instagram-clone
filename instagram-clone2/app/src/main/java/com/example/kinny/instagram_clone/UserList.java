@@ -3,6 +3,7 @@ package com.example.kinny.instagram_clone;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -49,6 +50,9 @@ public class UserList extends AppCompatActivity {
     String user = MainActivity.user.getEmail();
     ProgressBar progressBar;
     Button shareImage;
+    public static String currentUser;
+    String currentUserName;
+    DatabaseReference ref;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -81,7 +85,7 @@ public class UserList extends AppCompatActivity {
         progressBar.setVisibility(View.INVISIBLE);
 
 
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users");
+        ref = FirebaseDatabase.getInstance().getReference("users");
         ref.addListenerForSingleValueEvent(
             new ValueEventListener() {
                 @Override
@@ -92,6 +96,10 @@ public class UserList extends AppCompatActivity {
                     for(DataSnapshot data: dataSnapshot.getChildren()){
                         if(!user.equals(String.valueOf((data.child("email")).getValue()))){
                             usersList.add(String.valueOf((data.child("username")).getValue()));
+                        }else{
+                            //Log.i("Data", String.valueOf(data.child()))
+                            currentUser = String.valueOf(data.getKey());
+                            currentUserName = String.valueOf((data.child("username")).getValue());
                         }
                     }
 
@@ -131,6 +139,12 @@ public class UserList extends AppCompatActivity {
             Intent i = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(i);
         }
+
+        if(id == R.id.myfeed){
+            Intent i = new Intent(getApplicationContext(), UserFeed.class);
+            i.putExtra("username", currentUserName);
+            startActivity(i);
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -166,6 +180,27 @@ public class UserList extends AppCompatActivity {
                         progressBar.setVisibility(View.GONE);
                         shareImage.setEnabled(true);
 
+                        ref.addListenerForSingleValueEvent(
+                            new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    for(DataSnapshot data: dataSnapshot.getChildren()){
+                                        if(String.valueOf(data.getKey()).equals(currentUser)) {
+                                            ref.child(String.valueOf(currentUser)).child("images").push().setValue(String.valueOf(mStorageRef));
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    //handle databaseError
+                                    Log.w("data", "Failed to read value.", databaseError.toException());
+                                }
+                            });
+
+                        //MainActivity.database.getReference().child("users").push().setValue("Hello");
+                        Log.i("current user", currentUser);
+                        Log.i("download link", String.valueOf(mStorageRef));
                         Toast.makeText(getApplicationContext(), "Photo Uploaded!", Toast.LENGTH_LONG).show();
                     }
                 });

@@ -4,5 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools" tools:context="com.example.kinny.instagram_clone.UserList">
 
     <item android:id="@+id/Logout" android:title="Logout" app:showAsAction="always" />
+    <item android:id="@+id/myfeed" android:title="My Feed" app:showAsAction="always" />
 
 </menu>

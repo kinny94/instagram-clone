@@ -8,7 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -30,9 +32,14 @@ import java.util.ArrayList;
 
 public class UserFeed extends AppCompatActivity {
 
+    private FirebaseStorage storage = FirebaseStorage.getInstance();
+    private StorageReference mStorageRef = storage.getReference();
+
     LinearLayout linearLayout;
-    private StorageReference storageReference;
     String userEmail;
+    String currentUser;
+    ArrayList<String> imageLinks;
+    boolean userHasImages = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,9 +51,9 @@ public class UserFeed extends AppCompatActivity {
 
         setTitle(usernameForFeed + "'s Feed");
         linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
-        final ImageView imageview = (ImageView) findViewById(R.id.imageView);
 
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users");
+        final DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users");
+
         ref.addListenerForSingleValueEvent(
             new ValueEventListener() {
                 @Override
@@ -55,29 +62,63 @@ public class UserFeed extends AppCompatActivity {
                     for(DataSnapshot data: dataSnapshot.getChildren()){
                         if(usernameForFeed.equals(String.valueOf(data.child("username").getValue()))){
                             userEmail = String.valueOf(data.child("email").getValue());
+                            currentUser = String.valueOf(data.getKey());
+                            if(data.hasChild("images")){
+                                userHasImages = true;
+                            }
                         }
                     }
 
-                    storageReference = FirebaseStorage.getInstance().getReference().child(userEmail + "/3fcca0f2-906c-4042-b895-dfd16d7fd200.png");
-                    Log.i("currentStorage", String.valueOf(storageReference));
+                    if(!userHasImages){
+                        Toast.makeText(getApplicationContext(), "User hasn't posted anything yet!", Toast.LENGTH_LONG).show();
+                        return;
+                    }
 
-                    storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            Glide.with(getApplicationContext())
-                                    .using(new FirebaseImageLoader())
-                                    .load(storageReference)
-                                    .into(imageview);
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            // Handle any errors
-                        }
-                    });
+                    final DatabaseReference currentUserData = ref.child(currentUser).child("images");
+                    Log.i("ImagesLinks", String.valueOf(currentUserData));
+                    imageLinks = new ArrayList<String>();
 
+                    currentUserData.addListenerForSingleValueEvent(
+                        new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                for(DataSnapshot data: dataSnapshot.getChildren()){
+                                    imageLinks.add(String.valueOf(data.getValue()));
+                                }
 
-                    Log.i("currentStorage", String.valueOf(storageReference));
+                                for(int i=0;i<=imageLinks.size()-1;i++)
+                                {
+                                    String exactStorageLocation = imageLinks.get(i).replace("%40", "@");
+                                    StorageReference current = storage.getReferenceFromUrl(exactStorageLocation);
+
+                                    ImageView image = new ImageView(getApplicationContext());
+                                    image.setLayoutParams(new ViewGroup.LayoutParams(
+                                            ViewGroup.LayoutParams.MATCH_PARENT,
+                                            500
+                                    ));
+                                    image.getLayoutParams().height = 1000;
+                                    image.getLayoutParams().width = ViewGroup.LayoutParams.MATCH_PARENT;
+                                    image.setId(View.generateViewId());
+
+                                    // Adds the view to the layout
+                                    linearLayout.addView(image);
+
+                                    Glide.with(getApplicationContext())
+                                            .using(new FirebaseImageLoader())
+                                            .load(current)
+                                            .into(image);
+
+                                }
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                //handle databaseError
+                                Log.w("data", "Failed to read value.", databaseError.toException());
+                            }
+                        });
+
                 }
 
                 @Override
@@ -86,6 +127,7 @@ public class UserFeed extends AppCompatActivity {
                     Log.w("data", "Failed to read value.", databaseError.toException());
                 }
             });
+
 
     }
 }
