@@ -164,22 +164,23 @@ class MainActivity extends AppCompatActivity implements View.OnClickListener, Vi
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
                         boolean usernamTaken = false;
+                        boolean emailIdTken = false;
 
                         for(DataSnapshot data: dataSnapshot.getChildren()){
 
-                            //Log.i("username", String.valueOf(data.child("username").getValue()));
                             if ((data.child("username").getValue()).equals(String.valueOf(username.getText()))) {
-                                Log.i("name", String.valueOf(username.getText()));
-                                Log.i("name", String.valueOf(dataSnapshot));
                                 usernamTaken = true;
                                 break;
                             }
                         }
 
-                        if(usernamTaken){
-                            makeToast("Username Taken, Try Something else");
-                        }else{
+                        if(!usernamTaken){
                             createAccount(String.valueOf(email.getText()), String.valueOf(password.getText()), String.valueOf(username.getText()));
+                            return;
+                        }
+                        else{
+                            makeToast("Username Taken, Try Something else");
+                            return;
                         }
                     }
 

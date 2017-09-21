@@ -51,7 +51,7 @@ public class UserList extends AppCompatActivity {
     ProgressBar progressBar;
     Button shareImage;
     public static String currentUser;
-    String currentUserName;
+    public static String currentUserName;
     DatabaseReference ref;
 
     @Override
