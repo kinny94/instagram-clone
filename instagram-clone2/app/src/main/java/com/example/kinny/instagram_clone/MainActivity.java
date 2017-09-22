@@ -73,7 +73,7 @@ class MainActivity extends AppCompatActivity implements View.OnClickListener, Vi
                     // User is signed in
 
 
-                    makeToast("Welcome back " + user.getEmail());
+                    makeToast("Welcome " + user.getEmail());
                     showUserList();
                 } else {
                     // User is signed out
@@ -117,16 +117,12 @@ class MainActivity extends AppCompatActivity implements View.OnClickListener, Vi
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            Log.i("Sign Up", "createUserWithEmail:success");
-
                             User newUser = new User(accountEmail, accountPassword, accountUsername);
                             myRef.push().setValue(newUser);
-                            makeToast("Successfully Signed Up");
                             showUserList();
 
                         } else {
                             // If sign in fails, display a message to the user.
-                            Log.i("Sign Up", "createUserWithEmail:failure", task.getException());
                             task.getException();
                             Toast.makeText(getApplicationContext(), task.getException().getLocalizedMessage(),
                                     Toast.LENGTH_SHORT).show();
@@ -164,7 +160,6 @@ class MainActivity extends AppCompatActivity implements View.OnClickListener, Vi
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
                         boolean usernamTaken = false;
-                        boolean emailIdTken = false;
 
                         for(DataSnapshot data: dataSnapshot.getChildren()){
 
@@ -230,7 +225,7 @@ class MainActivity extends AppCompatActivity implements View.OnClickListener, Vi
     }
 
     public void makeToast(String text) {
-        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
     }
 
     @Override

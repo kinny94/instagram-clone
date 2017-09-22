@@ -16,11 +16,10 @@
         android:onClick="shareImage"
         android:text="Share"
         android:textSize="15dp"
-        tools:layout_editor_absoluteX="24dp"
-        tools:layout_editor_absoluteY="4dp" />
+ />
     
     <ProgressBar
-        style="@android:style/Widget.ProgressBar.Large"
+        style="@android:style/Widget.Material.ProgressBar.Large"
         android:id="@+id/progressbar"
         android:layout_width="match_parent"
         android:layout_height="100dp"
@@ -31,7 +30,6 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_below="@id/share"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="8dp" />
+ />
     
 </RelativeLayout>

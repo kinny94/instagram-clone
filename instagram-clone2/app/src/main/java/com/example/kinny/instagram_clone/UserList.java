@@ -197,11 +197,7 @@ public class UserList extends AppCompatActivity {
                                     Log.w("data", "Failed to read value.", databaseError.toException());
                                 }
                             });
-
-                        //MainActivity.database.getReference().child("users").push().setValue("Hello");
-                        Log.i("current user", currentUser);
-                        Log.i("download link", String.valueOf(mStorageRef));
-                        Toast.makeText(getApplicationContext(), "Photo Uploaded!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Photo Uploaded!", Toast.LENGTH_SHORT).show();
                     }
                 });
 

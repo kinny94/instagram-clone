@@ -90,7 +90,6 @@ public class UserFeed extends AppCompatActivity {
                     }
 
                     final DatabaseReference currentUserData = ref.child(currentUser).child("images");
-                    Log.i("ImagesLinks", String.valueOf(currentUserData));
                     imageLinks = new ArrayList<String>();
                     imagesInFirebase = new HashMap<String, String>();
 
@@ -158,7 +157,6 @@ public class UserFeed extends AppCompatActivity {
                                                                 imagesInFirebase.remove(pair.getKey());
                                                                 currentUserData.child(String.valueOf(pair.getKey())).removeValue();
                                                                 linearLayout.removeView(linearLayout.findViewById(image.getId()));
-                                                                Log.i("Array size", String.valueOf(imageLinks.size()));
                                                                 desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                                     @Override
                                                                     public void onSuccess(Void aVoid) {
@@ -172,7 +170,6 @@ public class UserFeed extends AppCompatActivity {
                                                                         Toast.makeText(getApplicationContext(), "Something Went Wrong!", Toast.LENGTH_SHORT).show();
                                                                     }
                                                                 });
-                                                                Toast.makeText(getApplicationContext(), "Yes", Toast.LENGTH_SHORT).show();
                                                             }
                                                         })
                                                         .setNegativeButton("No", null)
