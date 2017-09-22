@@ -173,10 +173,7 @@ class MainActivity extends AppCompatActivity implements View.OnClickListener, Vi
                             createAccount(String.valueOf(email.getText()), String.valueOf(password.getText()), String.valueOf(username.getText()));
                             return;
                         }
-                        else{
-                            makeToast("Username Taken, Try Something else");
-                            return;
-                        }
+                        
                     }
 
                     @Override
